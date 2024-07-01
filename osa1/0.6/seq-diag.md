@@ -13,6 +13,6 @@ sequenceDiagram
 
     browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa (send note to server)
     activate server
-    server-->>browser: OK 201
+    server-->>browser: JSON-file {"message": "note created"}, Status 201 OK
     deactivate server
 ```
