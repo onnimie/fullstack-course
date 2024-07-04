@@ -19,6 +19,12 @@ const Header = (props) => {
   )
 }
 
+const StatisticsLine = ({text, value}) => {
+  return (
+    <li>{text} {value}</li>
+  )
+}
+
 const StatisticsDisplay = (props) => {
   const total = props.good + props.bad + props.neutral
   const average = (props.good - props.bad) / total 
@@ -28,12 +34,12 @@ const StatisticsDisplay = (props) => {
       <div>
         <h2>Statistics</h2>
         <ul>
-          <li>good {props.good}</li>
-          <li>neutral {props.neutral}</li>
-          <li>bad {props.bad}</li>
-          <li>all {total}</li>
-          <li>average {average}</li>
-          <li>positive {positive}</li>
+          <StatisticsLine text="good" value={props.good} />
+          <StatisticsLine text="neutral" value={props.neutral} />
+          <StatisticsLine text="bad" value={props.bad} />
+          <StatisticsLine text="all" value={total} />
+          <StatisticsLine text="average" value={average} />
+          <StatisticsLine text="positive" value={positive} />
         </ul>
 
       </div>
