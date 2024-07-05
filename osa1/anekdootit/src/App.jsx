@@ -11,6 +11,27 @@ const Button = (props) => {
   )
 }
 
+const Header = (props) => {
+  return (
+    <div>
+      <h1>{props.text}</h1>
+    </div>
+  )
+}
+
+const AnecdoteDisplay = (props) => {
+  return (
+    <div>
+      <p>
+        {props.text}
+      </p>
+      <p>
+        has {props.votes} votes
+      </p>
+    </div>
+  )
+}
+
 
 const App = () => {
   const anecdotes = [
@@ -33,15 +54,33 @@ const App = () => {
     setVotes(copy)
   }
 
+  const mostAnecdoteIndx = getBiggestVotesIndx(votes)
+
   return (
     <div>
-      {anecdotes[selected]}
-      <br />
-      has {votes[selected]} votes
+      <Header text="Anecdote of the day" />
+      <AnecdoteDisplay text={anecdotes[selected]} votes={votes[selected]} />
       <Button handleClick={() => voteCurrentAnecdote()} text="vote" />
       <Button handleClick={() => setSelected(getRandomInt(anecdotes.length))} text="next anecdote" />
+      <Header text="Anecdote with the most votes" />
+      <AnecdoteDisplay text={anecdotes[mostAnecdoteIndx]} votes={votes[mostAnecdoteIndx]} />
+      
     </div>
   )
+}
+
+function getBiggestVotesIndx(arr) {
+  let biggest = 0
+  let index = 0
+  let i = 0
+  arr.forEach(v => {
+    if (v > biggest) {
+      biggest = v
+      index = i
+    }
+    i += 1
+  })
+  return index
 }
 
 
