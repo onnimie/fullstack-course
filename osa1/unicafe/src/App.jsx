@@ -21,26 +21,29 @@ const Header = (props) => {
 
 const StatisticsLine = ({text, value}) => {
   return (
-    <li>{text} {value}</li>
+    <tr>
+      <td>{text}</td>
+      <td>{value}</td>
+    </tr>
   )
 }
 
 const StatisticsDisplay = (props) => {
   const total = props.good + props.bad + props.neutral
   const average = (props.good - props.bad) / total 
-  const positive = props.good / total
+  const positive = ((props.good / total)*100).toString() + " %"
   if (total > 0) {
     return (
       <div>
         <h2>Statistics</h2>
-        <ul>
+        <table>
           <StatisticsLine text="good" value={props.good} />
           <StatisticsLine text="neutral" value={props.neutral} />
           <StatisticsLine text="bad" value={props.bad} />
           <StatisticsLine text="all" value={total} />
           <StatisticsLine text="average" value={average} />
           <StatisticsLine text="positive" value={positive} />
-        </ul>
+        </table>
 
       </div>
     )
