@@ -22,10 +22,13 @@ const App = () => {
   }
 
   const addEntry = (event) => {
-    console.log("add entry: ", event)
     event.preventDefault()
-    setPersons(persons.concat({name: newName}))
-    setNewName('')
+    if (persons.map(p => p.name).includes(newName)) {
+      alert(`${newName} on jo luettelossa!`)
+    } else {
+      setPersons(persons.concat({name: newName}))
+      setNewName('')
+    }
   }
 
   return (
