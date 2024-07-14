@@ -9,6 +9,39 @@ const Entry = (props) => {
   )
 }
 
+const Filter = (props) => {
+  const handleFilterwordInputChange = props.onChange
+  const filterword = props.filterword
+  return (
+    <div>
+      filter shown with <input onChange={handleFilterwordInputChange} value={filterword} />
+    </div>
+  )
+}
+
+const EntryForm = (props) => {
+  const addEntry = props.addEntry
+  const handleNameInputChange = props.onNameChange
+  const handleNumberInputChange = props.onNumberChange
+  const newName = props.nameValue
+  const newNumber = props.numberValue
+  return (
+    <form onSubmit={addEntry}>
+      <div>
+        name: <input onChange={handleNameInputChange}
+        value={newName} />
+      </div>
+      <div>
+        number: <input onChange={handleNumberInputChange}
+        value={newNumber} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
 
 const App = () => {
 
@@ -54,24 +87,19 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with <input onChange={handleFilterwordInputChange} value={filterword} />
-      </div>
+
+      <Filter onChange={handleFilterwordInputChange} filterword={filterword} />
+
       <h3>Add a new entry:</h3>
-      <form onSubmit={addEntry}>
-        <div>
-          name: <input onChange={handleNameInputChange}
-          value={newName} />
-        </div>
-        <div>
-          number: <input onChange={handleNumberInputChange}
-          value={newNumber} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+
+      <EntryForm addEntry={addEntry}
+        onNameChange={handleNameInputChange}
+        onNumberChange={handleNumberInputChange}
+        nameValue={newName}
+        numberValue={newNumber} />
+
       <h2>Numbers</h2>
+      
       <ul>
         {filteredPersons.map(p => 
           <Entry key={p.name} name={p.name} number={p.number} />
