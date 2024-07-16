@@ -14,4 +14,9 @@ const addPhonebookEntry = (name, number) => {
     return p.then(res => res.data)
 }
 
-export default { getPhonebookAll, addPhonebookEntry }
+const deletePhonebookEntry = id => {
+    return axios.delete(phonebookURL + `/${id}`)
+}
+
+
+export default { getPhonebookAll, addPhonebookEntry, deletePhonebookEntry }

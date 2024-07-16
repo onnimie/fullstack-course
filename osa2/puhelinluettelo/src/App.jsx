@@ -3,9 +3,11 @@ import axios from 'axios'
 import phonebookService from './services/phonebookService'
 
 const Entry = (props) => {
+  //console.log(props)
   return (
     <li>
-      <p>{props.name} {props.number}</p>
+      {props.name} {props.number}
+      <button onClick={() => props.deleteEntry(props.name, props.id)}>delete</button>
     </li>
   )
 }
@@ -79,10 +81,20 @@ const App = () => {
     if (persons.map(p => p.name).includes(newName)) {
       alert(`${newName} is already added to the phonebook!`)
     } else {
-      setPersons(persons.concat({name: newName, number: newNumber}))
-      setNewName('')
-      setNewNumber('')
-      phonebookService.addPhonebookEntry(newName, newNumber)
+      phonebookService.addPhonebookEntry(newName, newNumber).then(newPerson => {
+        setPersons(persons.concat(newPerson))
+        setNewName('')
+        setNewNumber('')
+      })
+    }
+  }
+
+  const deleteEntry = (name, id) => {
+    if (window.confirm(`Delete ${name}?`)) {
+      phonebookService.deletePhonebookEntry(id).then(res => {
+        console.log(`Deleted person ${name}!`)
+        setPersons(persons.filter(p => p.id !== id))
+      })
     }
   }
 
@@ -106,7 +118,7 @@ const App = () => {
       
       <ul>
         {filteredPersons.map(p => 
-          <Entry key={p.name} name={p.name} number={p.number} />
+          <Entry key={p.name} name={p.name} number={p.number} id={p.id} deleteEntry={deleteEntry} />
         )}
       </ul>
     </div>
