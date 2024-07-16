@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
-
+import phonebookService from './services/phonebookService'
 
 const Entry = (props) => {
   return (
@@ -53,10 +53,9 @@ const App = () => {
 
   useEffect(() => {
     console.log("effect")
-    const p = axios.get('http://localhost:3001/persons')
-    p.then(res => {
+    phonebookService.getPhonebookAll().then(personsRes => {
       console.log('promise fulfilled')
-      setPersons(res.data)
+      setPersons(personsRes)
     })
   }, [])
 
@@ -83,6 +82,7 @@ const App = () => {
       setPersons(persons.concat({name: newName, number: newNumber}))
       setNewName('')
       setNewNumber('')
+      phonebookService.addPhonebookEntry(newName, newNumber)
     }
   }
 
