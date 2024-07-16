@@ -18,5 +18,14 @@ const deletePhonebookEntry = id => {
     return axios.delete(phonebookURL + `/${id}`)
 }
 
+const updatePhonebookEntry = (newEntryObj) => {
+    const updatedObj = {...newEntryObj}
+    const p = axios.put(
+        phonebookURL + `/${newEntryObj.id}`,
+        newEntryObj
+    )
+    return p.then(res => res.data)
+}
 
-export default { getPhonebookAll, addPhonebookEntry, deletePhonebookEntry }
+
+export default { getPhonebookAll, addPhonebookEntry, deletePhonebookEntry, updatePhonebookEntry }

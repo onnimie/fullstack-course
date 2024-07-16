@@ -79,7 +79,18 @@ const App = () => {
   const addEntry = (event) => {
     event.preventDefault()
     if (persons.map(p => p.name).includes(newName)) {
-      alert(`${newName} is already added to the phonebook!`)
+      //alert(`${newName} is already added to the phonebook!`)
+      if (window.confirm(`${newName} is already added to the phonebook. Replace the old number with the new one?`)) {
+        const p = persons.find(p => p.name === newName)
+        phonebookService
+          .updatePhonebookEntry({...p, number: newNumber})
+          .then(updatedEntry => {
+            console.log(`Updated entry for ${newName}!`)
+            setNewName('')
+            setNewNumber('')
+            setPersons(persons.map(person => person.id !== p.id ? person : updatedEntry))
+          })
+      }
     } else {
       phonebookService.addPhonebookEntry(newName, newNumber).then(newPerson => {
         setPersons(persons.concat(newPerson))
