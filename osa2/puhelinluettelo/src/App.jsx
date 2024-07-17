@@ -57,6 +57,18 @@ const Message = ({msg}) => {
   }
 }
 
+const Error = ({msg}) => {
+  if (!msg) {
+    return <></>
+  } else {
+    return (
+      <div className="error">
+        {msg}
+      </div>
+    )
+  }
+}
+
 
 const App = () => {
 
@@ -65,11 +77,19 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [filterword, setNewFilterword] = useState('')
   const [message, setMessage] = useState(null)
+  const [error, setError] = useState(null)
 
   const sendMessage = text => {
     setMessage(`${text}`)
     setTimeout(() => {
       setMessage(null)
+    }, 5000)
+  }
+
+  const sendError = text => {
+    setError(`${text}`)
+    setTimeout(() => {
+      setError(null)
     }, 5000)
   }
 
@@ -111,6 +131,9 @@ const App = () => {
             setNewNumber('')
             setPersons(persons.map(person => person.id !== p.id ? person : updatedEntry))
           })
+          .catch(err => {
+            sendError(`Information of ${newName} has already been removed from the server.`)
+          })
       }
     } else {
       phonebookService.addPhonebookEntry(newName, newNumber).then(newPerson => {
@@ -138,6 +161,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
 
+      <Error msg={error} />
       <Message msg={message} />
 
       <Filter onChange={handleFilterwordInputChange} filterword={filterword} />
