@@ -45,6 +45,18 @@ const EntryForm = (props) => {
   )
 }
 
+const Message = ({msg}) => {
+  if (!msg) {
+    return <></>
+  } else {
+    return (
+      <div className="message">
+        {msg}
+      </div>
+    )
+  }
+}
+
 
 const App = () => {
 
@@ -52,6 +64,14 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterword, setNewFilterword] = useState('')
+  const [message, setMessage] = useState(null)
+
+  const sendMessage = text => {
+    setMessage(`${text}`)
+    setTimeout(() => {
+      setMessage(null)
+    }, 5000)
+  }
 
   useEffect(() => {
     console.log("effect")
@@ -86,6 +106,7 @@ const App = () => {
           .updatePhonebookEntry({...p, number: newNumber})
           .then(updatedEntry => {
             console.log(`Updated entry for ${newName}!`)
+            sendMessage(`Updated entry for ${newName}!`)
             setNewName('')
             setNewNumber('')
             setPersons(persons.map(person => person.id !== p.id ? person : updatedEntry))
@@ -93,6 +114,7 @@ const App = () => {
       }
     } else {
       phonebookService.addPhonebookEntry(newName, newNumber).then(newPerson => {
+        sendMessage(`Added entry for ${newName}!`)
         setPersons(persons.concat(newPerson))
         setNewName('')
         setNewNumber('')
@@ -104,6 +126,7 @@ const App = () => {
     if (window.confirm(`Delete ${name}?`)) {
       phonebookService.deletePhonebookEntry(id).then(res => {
         console.log(`Deleted person ${name}!`)
+        sendMessage(`Deleted entry for ${newName}!`)
         setPersons(persons.filter(p => p.id !== id))
       })
     }
@@ -114,6 +137,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+
+      <Message msg={message} />
 
       <Filter onChange={handleFilterwordInputChange} filterword={filterword} />
 
