@@ -54,6 +54,20 @@ describe('blog api tests', () => {
     assert(currentBlogs.map(b => b.title).includes(postedBlog.title))
   })
 
+  test('if POSTing a blog without \'likes\' field, likes should be set to 0', async () => {
+    const blogToPost = {
+      author: helper.testBlog.author,
+      url: helper.testBlog.url,
+      title: helper.testBlog.title
+    }
+
+    const res = await api.post('/api/blogs').send(blogToPost)
+    const currentBlogs = await helper.blogsInDb()
+    const b = currentBlogs.find(p => p.title === blogToPost.title && p.author === blogToPost.author && p.url === blogToPost.url)
+    assert.strictEqual(b.likes, 0)
+    assert.strictEqual(res.body.likes, 0)
+  })
+
 })
 
 
