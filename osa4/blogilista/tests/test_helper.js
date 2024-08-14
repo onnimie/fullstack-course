@@ -50,7 +50,13 @@ const initialBlogs = [
       __v: 0
     }  
   ]
-  
+
+const testBlog = {
+  title: 'Title1_TEST',
+  author: 'Author1_TEST',
+  url: 'http://localhost/test1',
+  likes: 1
+}
 
 const nonExistingId = async () => {
   const blog = new Blog({ content: 'willremovethissoon' })
@@ -66,5 +72,5 @@ const blogsInDb = async () => {
 }
 
 module.exports = {
-  initialBlogs, nonExistingId, blogsInDb
+  initialBlogs, nonExistingId, blogsInDb, testBlog
 }
