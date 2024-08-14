@@ -28,6 +28,12 @@ describe('blog api tests', () => {
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
+  test('returned blogs have a field \'id\'', async () => {
+    const response = await api.get('/api/blogs')
+    const firstBlog = response[0]
+    assert(firstBlog.id)
+  })
+
 })
 
 
