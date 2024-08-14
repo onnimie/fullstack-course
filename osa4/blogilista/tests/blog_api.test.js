@@ -30,7 +30,7 @@ describe('blog api tests', () => {
 
   test('returned blogs have a field \'id\'', async () => {
     const response = await api.get('/api/blogs')
-    const firstBlog = response[0]
+    const firstBlog = response.body[0]
     assert(firstBlog.id)
   })
 
