@@ -7,6 +7,7 @@ const api = supertest(app)
 
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const e = require('express')
 
 beforeEach(async () => {
   await Blog.deleteMany({})
@@ -119,6 +120,53 @@ describe('blog api tests', () => {
 
     assert.strictEqual(b1, undefined)
     assert.strictEqual(helper.initialBlogs.length-1, currentBlogs.length)
+  })
+
+  test('PUT gives the correct responses for existing and missing ids, and for sending incomplete data (missing fields)', async () => {
+    const existingBlogToPut = helper.initialBlogs[2]
+    const nonExistingId = await helper.nonExistingId()
+    const newBlogToPut = helper.testBlog
+
+    await api.put(`/api/blogs/${existingBlogToPut._id}`)
+      .send(existingBlogToPut)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+    
+    const res2 = await api.put(`/api/blogs/${nonExistingId}`)
+      .send({newBlogToPut})
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    const res3 = await api.put(`/api/blogs/${existingBlogToPut._id}`)
+      .send({ blog: 'missing all relevant fields' })
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    
+    assert(res2.error)
+    assert(res3.error)
+  })
+
+  test('PUT updates the correct blog in the database', async () => {
+    const i = 3
+    const existingBlogToPut = { ...helper.initialBlogs[i] }
+    existingBlogToPut.likes = existingBlogToPut.likes + 1
+    existingBlogToPut.title = "NEW TITLE " + existingBlogToPut.title
+    existingBlogToPut.url = "NEW URL " + existingBlogToPut.url
+    existingBlogToPut.author = "NEW AUTHOR " + existingBlogToPut.author
+
+    await api.put(`/api/blogs/${existingBlogToPut._id}`)
+      .send(existingBlogToPut)
+    
+    const currentBlogs = await helper.blogsInDb()
+    const updatedBlog = currentBlogs.find(p => p.id === existingBlogToPut._id)
+    assert(updatedBlog)
+
+    assert.notStrictEqual(updatedBlog.author, helper.initialBlogs[i].author)
+    assert.notStrictEqual(updatedBlog.title, helper.initialBlogs[i].title)
+    assert.notStrictEqual(updatedBlog.url, helper.initialBlogs[i].url)
+    assert.notStrictEqual(updatedBlog.likes, helper.initialBlogs[i].likes)
+
+    assert.strictEqual(helper.initialBlogs.length, currentBlogs.length)
   })
 
 })
