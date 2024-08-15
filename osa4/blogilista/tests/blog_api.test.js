@@ -95,6 +95,32 @@ describe('blog api tests', () => {
     assert.strictEqual(b2, undefined)
   })
 
+  test('DELETE gives the correct responses for existing and missing id', async () => {
+    const blogToDelete = helper.initialBlogs[2]
+
+    const res1 = await api.delete(`/api/blogs/${blogToDelete._id}`)
+      .expect(204)
+    
+    const missingId = await helper.nonExistingId()
+
+    const res2 = await api.delete(`/api/blogs/${missingId}`)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+    assert(res2.error)
+  })
+
+  test('after DELETE, the blog is no longer in the database', async () => {
+    const blogToDelete = helper.initialBlogs[3]
+
+    await api.delete(`/api/blogs/${blogToDelete._id}`)
+
+    const currentBlogs = await helper.blogsInDb()
+    const b1 = currentBlogs.find(p => p.id === blogToDelete._id)
+
+    assert.strictEqual(b1, undefined)
+    assert.strictEqual(helper.initialBlogs.length-1, currentBlogs.length)
+  })
+
 })
 
 
