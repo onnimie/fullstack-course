@@ -68,6 +68,33 @@ describe('blog api tests', () => {
     assert.strictEqual(res.body.likes, 0)
   })
 
+  test('if POSTing a blog without a \'title\' field or a \'url\' field, should respond with a 400 Bad Request, and the blogs should not be in the database', async () => {
+    const blogToPostWithoutTitle = {
+      author: helper.testBlog.author,
+      url: helper.testBlog.url,
+      likes: 10
+    }
+    const blogToPostWithoutURL = {
+      author: helper.testBlog.author,
+      title: helper.testBlog.title,
+      likes: 9
+    }
+
+    const res1 = await api.post('/api/blogs')
+      .send(blogToPostWithoutTitle)
+      .expect(400)
+    const res2 = await api.post('/api/blogs')
+      .send(blogToPostWithoutURL)
+      .expect(400)
+
+    const currentBlogs = await helper.blogsInDb()
+    const b1 = currentBlogs.find(p => p.url === blogToPostWithoutTitle.url && p.author === blogToPostWithoutTitle.author)
+    const b2 = currentBlogs.find(p => p.title === blogToPostWithoutURL.title && p.author === blogToPostWithoutURL.author)
+
+    assert.strictEqual(b1, undefined)
+    assert.strictEqual(b2, undefined)
+  })
+
 })
 
 
