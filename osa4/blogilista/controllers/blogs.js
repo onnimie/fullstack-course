@@ -39,5 +39,34 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
 })
 
+blogsRouter.put('/:id', async (request, response) => {
+  const id = request.params.id
+  const updatedBlog = request.body
+
+  const idExists = await Blog.exists({_id: id})
+
+  if (idExists === null) {
+    response.status(400).json({
+      error: 'Cannot update non-existing id'
+  })}
+  else if (!updatedBlog.author || !updatedBlog.url || !updatedBlog.title || !updatedBlog.likes) {
+    response.status(400).json({
+      error: 'Missing fields (author, url, title or likes)'
+    })
+  }
+  else {
+
+    const blog = {
+      title: updatedBlog.title,
+      author: updatedBlog.author,
+      url: updatedBlog.url,
+      likes: updatedBlog.likes
+    }
+
+    const res = await Blog.findByIdAndUpdate(id, blog, { new: true })
+    response.status(200).json(res)
+  }
+})
+
 
 module.exports = blogsRouter
