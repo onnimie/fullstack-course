@@ -12,9 +12,17 @@ blogsRouter.post('/', async (request, response) => {
   if (!blog.likes) {
     blog.likes = 0
   }
-  
-  const res = await blog.save()
-  response.status(201).json(res)
+
+  if (!blog.url || !blog.title) {
+
+    response.status(400).json({
+      error: 'Missing fields (url or title)'
+    })
+  } else {
+
+    const res = await blog.save()
+    response.status(201).json(res)
+  }
 })
 
 
