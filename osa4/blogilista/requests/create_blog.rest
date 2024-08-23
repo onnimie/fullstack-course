@@ -2,8 +2,8 @@ POST http://localhost:3001/api/blogs
 Content-type: application/json
 
 {
-    "title": "TEST",
-    "author": "Markus",
-    "url": "http://localhost:3001/api/blogs",
+    "title": "Toinen blogi, jolla on käyttäjämerkintä",
+    "author": "Testaaja",
+    "url": "http://localhost:3001/api/users",
     "likes": 1
 }
