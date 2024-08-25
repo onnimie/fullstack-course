@@ -1,9 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjZjODlhYmU1MTFiNWEyODRmODUzMjk4IiwiaWF0IjoxNzI0NTc5NDQ4LCJleHAiOjE3MjQ1ODMwNDh9.I0hnzauwqe_X_LZE4_Ych2bWvRdsYlqdA0S0KyveLqM
 
 {
-    "title": "Toinen blogi, jolla on käyttäjämerkintä",
-    "author": "Testaaja",
+    "title": "Erkin blogipostaus tokenin kanssa",
+    "author": "Tuntematon",
     "url": "http://localhost:3001/api/users",
     "likes": 1
 }
