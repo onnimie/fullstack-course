@@ -1,9 +1,9 @@
 POST http://localhost:3001/api/blogs
 Content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjZjODlhYmU1MTFiNWEyODRmODUzMjk4IiwiaWF0IjoxNzI0NTc5NDQ4LCJleHAiOjE3MjQ1ODMwNDh9.I0hnzauwqe_X_LZE4_Ych2bWvRdsYlqdA0S0KyveLqM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjZjODlhYmU1MTFiNWEyODRmODUzMjk4IiwiaWF0IjoxNzI0NTc5Nzg5LCJleHAiOjE3MjQ1ODMzODl9.t-sMr0_DqAjn4WAAHF91YkBp6KJRwKnVwjvtN_1xVhM
 
 {
-    "title": "Erkin blogipostaus tokenin kanssa",
+    "title": "Erkin toinen blogipostaus",
     "author": "Tuntematon",
     "url": "http://localhost:3001/api/users",
     "likes": 1
