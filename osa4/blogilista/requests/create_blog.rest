@@ -1,10 +1,10 @@
 POST http://localhost:3001/api/blogs
 Content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InRlc3RlciIsImlkIjoiNjZjODlhYmU1MTFiNWEyODRmODUzMjk4IiwiaWF0IjoxNzI0NTc5Nzg5LCJleHAiOjE3MjQ1ODMzODl9.t-sMr0_DqAjn4WAAHF91YkBp6KJRwKnVwjvtN_1xVhM
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1pZXR0aW8xIiwiaWQiOiI2NmM4OWE4YTUxMWI1YTI4NGY4NTMyOTUiLCJpYXQiOjE3MjQ1ODI5NjYsImV4cCI6MTcyNDU4NjU2Nn0.0_e6-bZP9ZXsoqcP7RcxcTj-ArMMGMbfT-7_BQm2-kc
 
 {
-    "title": "Erkin toinen blogipostaus",
-    "author": "Tuntematon",
+    "title": "Onnin uusin blogi userExtractorin jälkeen",
+    "author": "Onni Miettinen",
     "url": "http://localhost:3001/api/users",
     "likes": 1
 }
