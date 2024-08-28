@@ -7,36 +7,82 @@ const api = supertest(app)
 
 const helper = require('./test_helper')
 const Blog = require('../models/blog')
+const User = require('../models/user')
 const e = require('express')
 
+let userId_1 = null
+let userToken_1 = null
+let userId_2 = null
+let userToken_2 = null
+let userBlogs_1 = []
+let userBlogs_2 = []
+
 beforeEach(async () => {
+
+  await User.deleteMany({})
+  const createUserResponse1 = await api.post('/api/users').send(helper.initialUser1)
+  userId_1 = createUserResponse1.body.id
+  const loginResponse1 = await api.post('/api/login').send({ username: helper.initialUser1.username, password: helper.initialUser1.password })
+  //console.log(loginResponse1.body)
+  userToken_1 = loginResponse1.body.token
+
+  const createUserResponse2 = await api.post('/api/users').send(helper.initialUser2)
+  userId_2 = createUserResponse2.body.id
+  const loginResponse2 = await api.post('/api/login').send({ username: helper.initialUser2.username, password: helper.initialUser2.password })
+  userToken_2 = loginResponse2.body.token
+
+  const blogs_for_user1 = [helper.initialBlogs.shift()]
+  const blogs_for_user2 = helper.initialBlogs
+
+  blogs_for_user1.forEach(async (b) => {
+    b.user = userId_1
+    await User.findByIdAndUpdate(userId_1, { blogs: userBlogs_1.concat(b._id) })
+    userBlogs_1 = userBlogs_1.concat(b._id)
+  })
+  blogs_for_user2.forEach(async (b) => {
+    b.user = userId_2
+    await User.findByIdAndUpdate(userId_2, { blogs: userBlogs_2.concat(b._id) })
+    userBlogs_2 = userBlogs_2.concat(b._id)
+  })
+
   await Blog.deleteMany({})
-  await Blog.insertMany(helper.initialBlogs)
+  await Blog.insertMany(blogs_for_user1)
+  await Blog.insertMany(blogs_for_user2)
+
+  helper.initialBlogs = blogs_for_user1.concat(blogs_for_user2)
 })
 
 
 describe('blog api tests', () => {
 
   test('blogs are returned as json', async () => {
+    //console.log(userToken_1)
     await api
       .get('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
       .expect(200)
       .expect('Content-Type', /application\/json/)
   })
 
   test('correct number of blogs are returned', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
   test('returned blogs have a field \'id\'', async () => {
-    const response = await api.get('/api/blogs')
+    const response = await api
+      .get('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
     const firstBlog = response.body[0]
     assert(firstBlog.id)
   })
 
   test('POSTing a blog gives the correct response', async () => {
-    const response = await api.post('/api/blogs')
+    const response = await api
+        .post('/api/blogs')
+        .set('Authorization', 'Bearer '+ userToken_1)
         .send(helper.testBlog)
         .expect(201)
         .expect('Content-Type', /application\/json/)
@@ -47,7 +93,10 @@ describe('blog api tests', () => {
   })
 
   test('after POSTing a blog, number of blogs in database should be 1 higher, and the posted blog should be in the database', async () => {
-    const response = await api.post('/api/blogs').send(helper.testBlog)
+    const response = await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
+      .send(helper.testBlog)
     const postedBlog = response.body
 
     const currentBlogs = await helper.blogsInDb()
@@ -62,7 +111,10 @@ describe('blog api tests', () => {
       title: helper.testBlog.title
     }
 
-    const res = await api.post('/api/blogs').send(blogToPost)
+    const res = await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
+      .send(blogToPost)
     const currentBlogs = await helper.blogsInDb()
     const b = currentBlogs.find(p => p.title === blogToPost.title && p.author === blogToPost.author && p.url === blogToPost.url)
     assert.strictEqual(b.likes, 0)
@@ -81,10 +133,14 @@ describe('blog api tests', () => {
       likes: 9
     }
 
-    const res1 = await api.post('/api/blogs')
+    const res1 = await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
       .send(blogToPostWithoutTitle)
       .expect(400)
-    const res2 = await api.post('/api/blogs')
+    const res2 = await api
+      .post('/api/blogs')
+      .set('Authorization', 'Bearer '+ userToken_1)
       .send(blogToPostWithoutURL)
       .expect(400)
 
@@ -97,26 +153,31 @@ describe('blog api tests', () => {
   })
 
   test('DELETE gives the correct responses for existing and missing id', async () => {
-    const blogToDelete = helper.initialBlogs[2]
-
-    const res1 = await api.delete(`/api/blogs/${blogToDelete._id}`)
+    const blogToDeleteId = userBlogs_1[0]
+    const res1 = await api
+      .delete(`/api/blogs/${blogToDeleteId}`)
+      .set('Authorization', 'Bearer '+ userToken_1)
       .expect(204)
     
     const missingId = await helper.nonExistingId()
 
-    const res2 = await api.delete(`/api/blogs/${missingId}`)
+    const res2 = await api
+      .delete(`/api/blogs/${missingId}`)
+      .set('Authorization', 'Bearer '+ userToken_2)
       .expect(400)
       .expect('Content-Type', /application\/json/)
     assert(res2.error)
   })
 
   test('after DELETE, the blog is no longer in the database', async () => {
-    const blogToDelete = helper.initialBlogs[3]
+    const blogToDeleteId = userBlogs_2[2]
 
-    await api.delete(`/api/blogs/${blogToDelete._id}`)
+    await api
+      .delete(`/api/blogs/${blogToDeleteId}`)
+      .set('Authorization', 'Bearer '+ userToken_2)
 
     const currentBlogs = await helper.blogsInDb()
-    const b1 = currentBlogs.find(p => p.id === blogToDelete._id)
+    const b1 = currentBlogs.find(p => p.id === blogToDeleteId)
 
     assert.strictEqual(b1, undefined)
     assert.strictEqual(helper.initialBlogs.length-1, currentBlogs.length)
