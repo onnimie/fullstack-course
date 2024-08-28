@@ -79,7 +79,19 @@ describe('blog api tests', () => {
     assert(firstBlog.id)
   })
 
-  test('POSTing a blog gives the correct response', async () => {
+  test('POSTing a blog gives the correct response when the auth token is missing (and the blog is not added)', async () => {
+    const res1 = await api
+      .post('/api/blogs')
+      .send(helper.testBlog)
+      .expect(401)
+
+    const currentBlogs = await helper.blogsInDb()
+    const b1 = currentBlogs.find(p => p.url === helper.testBlog.url && p.author === helper.testBlog.author && p.title === helper.testBlog.title)
+
+    assert.strictEqual(b1, undefined)
+  })
+
+  test('POSTing a blog gives the correct response when authorized with a token', async () => {
     const response = await api
         .post('/api/blogs')
         .set('Authorization', 'Bearer '+ userToken_1)
